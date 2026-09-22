@@ -208,8 +208,7 @@ export default function TutorView({ settings, onOpenSettings, onOpenLogs, onLog 
         // Fetch the latest live code from the editor right now
         const liveCode = await requestLiveCode();
         if (liveCode.code) {
-          onLog("info", "Code", "Fetched live code snapshot",
-            `${liveCode.code.slice(0, 80)}…`);
+          onLog("info", "Code", "Fetched live code snapshot", liveCode.code);
         }
 
         // Build effective problem context:
