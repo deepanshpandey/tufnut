@@ -54,7 +54,7 @@ function readMeta(): LeetCodeMeta | null {
     document.querySelector<HTMLElement>("h4[data-cy]") ??
     document.querySelector<HTMLElement>("h1");
 
-  const title = titleEl?.innerText?.trim();
+  const title = (titleEl?.innerText ?? titleEl?.textContent)?.trim();
 
   // Problem description — try known stable selectors first, then fallback.
   const descEl =
@@ -70,7 +70,7 @@ function readMeta(): LeetCodeMeta | null {
   let constraints: string | undefined;
 
   if (descEl) {
-    const fullText = descEl.innerText ?? "";
+    const fullText = (descEl.innerText ?? descEl.textContent) ?? "";
 
     if (!fullText.trim()) return null; // not yet rendered
 
@@ -123,7 +123,7 @@ function detectLangFromUI(): string | undefined {
   ];
   for (const sel of selectors) {
     const el = document.querySelector<HTMLElement>(sel);
-    const text = el?.innerText?.trim();
+    const text = (el?.innerText ?? el?.textContent)?.trim();
     if (text && text.length < 30) return text;
   }
   return undefined;
