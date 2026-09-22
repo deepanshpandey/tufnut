@@ -14,31 +14,50 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { ExtensionMessage, ProblemContext } from "@/types";
-import { extractLeetCode }                                        from "./extractors/leetcode";
+import { extractLeetCode,
+         extractLeetCodeAsync,
+         extractCodeSnapshot as lcSnapshot }                      from "./extractors/leetcode";
 import { extractTakeUForward,
          extractTakeUForwardAsync,
-         extractCodeSnapshot }                                    from "./extractors/takeuforward";
+         extractCodeSnapshot as tufSnapshot }                     from "./extractors/takeuforward";
 import { extractGeeksForGeeks }                                   from "./extractors/geeksforgeeks";
 import { extractCodeforces }                                      from "./extractors/codeforces";
 import { extractGeneric }                                         from "./extractors/generic";
+import { extractCode }                                            from "./code/generic";
 
 // ── Extractor pipeline ────────────────────────────────────────────────────────
-// Async: for TUF we poll until the DOM renders (up to ~8 s).
-// For all others we try synchronously and fall back to generic.
+// Async: TUF and LeetCode both use React/Next.js SPAs — poll until the DOM
+// has rendered.  All other extractors run synchronously and fall back to
+// generic if the URL does not match.
 
 async function extractProblem(): Promise<ProblemContext> {
-  // Try TUF async first — it will immediately return null if URL doesn't match
+  // TUF async (short-circuits if URL doesn't match)
   const tuf = await extractTakeUForwardAsync();
   if (tuf) return tuf;
 
-  // Synchronous extractors (return null if URL doesn't match)
+  // LeetCode async (short-circuits if URL doesn't match)
+  const lc = await extractLeetCodeAsync();
+  if (lc) return lc;
+
+  // Synchronous extractors for remaining sites
   return (
-    extractLeetCode()      ??
-    extractTakeUForward()  ??   // sync fallback (already null — belt-and-suspenders)
+    extractLeetCode()      ??   // sync fallback (already polled above, belt-and-suspenders)
+    extractTakeUForward()  ??
     extractGeeksForGeeks() ??
     extractCodeforces()    ??
     extractGeneric()
   );
+}
+
+// ── Live code snapshot: pick the right extractor by URL ───────────────────────
+
+function extractCodeSnapshot(): { code?: string; language?: string } {
+  const url = window.location.href;
+  if (url.includes("takeuforward.org")) return tufSnapshot();
+  if (url.includes("leetcode.com"))     return lcSnapshot();
+  // Generic fallback for any other editor
+  const { code, language } = extractCode();
+  return { code: code ?? undefined, language: language ?? undefined };
 }
 
 // ── Message listener ──────────────────────────────────────────────────────────

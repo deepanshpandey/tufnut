@@ -26,7 +26,7 @@ export async function callAnthropic(
 
   const body = {
     model: config.model,
-    max_tokens: 512,
+    max_tokens: 4096,
     system: systemPrompt,
     messages: anthropicMessages,
   };

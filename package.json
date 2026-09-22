@@ -8,16 +8,19 @@
     "dev": "webpack --config webpack.config.js --mode development --watch",
     "test": "jest",
     "lint": "eslint src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
     "@google/genai": "^2.24.0",
+    "marked": "^15.0.12",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@types/chrome": "^0.3.0",
     "@types/jest": "^30.0.0",
+    "@types/marked": "^5.0.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@typescript-eslint/eslint-plugin": "^8.70.1",

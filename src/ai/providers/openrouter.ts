@@ -19,7 +19,7 @@ export async function callOpenRouter(
       { role: "system", content: systemPrompt },
       ...messages.map((m) => ({ role: m.role, content: m.content })),
     ],
-    max_tokens: 512,
+    max_tokens: 4096,
     temperature: 0.7,
   };
 

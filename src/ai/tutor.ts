@@ -17,7 +17,7 @@ import type {
   ConversationState,
   HintLevel,
 } from "@/types";
-import { buildSystemPrompt, SPOILER_REGENERATION_PROMPT } from "./prompts";
+ import { buildSystemPrompt, buildCorrectCodePrompt, SPOILER_REGENERATION_PROMPT } from "./prompts";
 import { checkForSpoilers, MAX_REGENERATION_ATTEMPTS }    from "./spoilerGuard";
 import { callOpenAI }      from "./providers/openai";
 import { callAnthropic }   from "./providers/anthropic";
@@ -158,6 +158,39 @@ export async function askTutor(request: TutorRequest): Promise<TutorResponse> {
     message: "Let me ask you this: what is the first thing you would do to understand this problem better?",
     wasSpoiler,
   };
+}
+
+// ── "Get correct code" — fully unlocked, no spoiler guard ────────────────────
+//
+// Called only when the user explicitly clicks "Get Correct Code".
+// The spoiler guard is intentionally bypassed — this IS the solution.
+
+export interface CorrectCodeResponse {
+  message: string;
+  error?:  string;
+}
+
+export async function getCorrectCode(
+  state:  ConversationState,
+  config: AIProviderConfig,
+): Promise<CorrectCodeResponse> {
+  const systemPrompt = buildCorrectCodePrompt(state.problemContext);
+
+  const userMsg: ChatMessage = {
+    role:      "user",
+    content:   "Please give me the correct solution, explain every mistake I made by line number, walk through the solution, and provide worked examples.",
+    timestamp: Date.now(),
+  };
+
+  const request: AICompletionRequest = {
+    config,
+    systemPrompt,
+    messages: [userMsg],
+  };
+
+  const response = await callProvider(request);
+  if (response.error) return { message: "", error: response.error };
+  return { message: response.content };
 }
 
 // ── Hint level management ─────────────────────────────────────────────────────
