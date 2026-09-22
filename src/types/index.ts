@@ -124,6 +124,8 @@ export type ExtensionMessageType =
   | "EXTRACT_PROBLEM"
   | "PROBLEM_EXTRACTED"
   | "EXTRACTION_FAILED"
+  | "REQUEST_CODE"
+  | "CODE_RESULT"
   | "OPEN_SIDE_PANEL"
   | "GET_SETTINGS"
   | "SAVE_SETTINGS"
@@ -152,4 +154,17 @@ export interface AICompletionResponse {
 export interface SpoilerCheckResult {
   hasSpoiler: boolean;
   reason?: string;
+}
+
+// ── Debug log entries (shown in the Logs panel) ───────────────────────────────
+
+export type LogLevel = "info" | "success" | "warn" | "error";
+
+export interface LogEntry {
+  id:        string;      // crypto.randomUUID()
+  timestamp: number;      // Date.now()
+  level:     LogLevel;
+  tag:       string;      // short category label, e.g. "Extractor", "AI", "Spoiler"
+  message:   string;      // one-line summary
+  detail?:   string;      // optional multi-line detail (stack trace, raw response)
 }
