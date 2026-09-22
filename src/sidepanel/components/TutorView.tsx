@@ -106,7 +106,7 @@ export default function TutorView({ settings, onOpenSettings, onOpenLogs, onLog 
             "Extractor",
             `Extracted "${ctx.title ?? "untitled"}" via ${ctx.extractedBy ?? "unknown"} extractor`,
             [
-              ctx.statement ? `Statement: ${ctx.statement.slice(0, 120)}…` : null,
+              ctx.statement ? `Statement: ${ctx.statement}` : null,
               ctx.language  ? `Language: ${ctx.language}` : null,
               ctx.code      ? `Code detected on mount` : "Code: will fetch on AI call",
             ].filter(Boolean).join("\n"),
