@@ -1,0 +1,19 @@
+// tsconfig for jest — uses CommonJS so ts-jest can run tests
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM"],
+    // Tests need jest globals AND chrome types
+    "types": ["chrome", "jest", "node"],
+    // Restore paths with baseUrl for jest's module resolver (node resolution)
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "tests/**/*"]
+}
